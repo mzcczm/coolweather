@@ -2,7 +2,7 @@ package com.coolweather.android.db;
 
 import org.litepal.crud.DataSupport;
 
-public class Country extends DataSupport {
+public class County extends DataSupport {
     private int id;
     private String countryName;
     private String weatherId;
@@ -16,11 +16,11 @@ public class Country extends DataSupport {
         this.id = id;
     }
 
-    public String getCountryName() {
+    public String getCountyName() {
         return countryName;
     }
 
-    public void setCountryName(String countryName) {
+    public void setCountyName(String countryName) {
         this.countryName = countryName;
     }
 
