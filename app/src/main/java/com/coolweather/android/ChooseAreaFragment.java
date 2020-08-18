@@ -46,7 +46,7 @@ public class ChooseAreaFragment extends Fragment {
     private List<String> dataList = new ArrayList<>();
     private List<Province> provinceList;
     private List<City> cityList;
-    private List<County> countryList;
+    private List<County> countyList;
     private Province selectedProvince;
     private City selectedCity;
     private int currentLevel;
@@ -77,11 +77,19 @@ public class ChooseAreaFragment extends Fragment {
                     selectedCity = cityList.get(position);
                     queryCounties();
                 }else if(currentLevel == LEVEL_COUNTRY){
-                    String weatherId = countryList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                    intent.putExtra("weather_id", weatherId);
-                    startActivity(intent);
-                    getActivity().finish();
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if (getActivity() instanceof  MainActivity){
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if (getActivity() instanceof WeatherActivity){
+                        WeatherActivity activity = (WeatherActivity)getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
+
                 }
             }
         });
@@ -136,10 +144,10 @@ public class ChooseAreaFragment extends Fragment {
     private void queryCounties(){
         titleText.setText(selectedCity.getCityName());
         backButton.setVisibility(View.VISIBLE);
-        countryList = DataSupport.where("cityid=?", String.valueOf(selectedCity.getId())).find(County.class);
-        if (countryList.size() > 0){
+        countyList = DataSupport.where("cityid=?", String.valueOf(selectedCity.getId())).find(County.class);
+        if (countyList.size() > 0){
             dataList.clear();
-            for (County country : countryList){
+            for (County country : countyList){
                 dataList.add(country.getCountyName());
             }
             adapter.notifyDataSetChanged();
@@ -187,7 +195,7 @@ public class ChooseAreaFragment extends Fragment {
                                 queryProvinces();
                             }else if ("city".equals(type)){
                                 queryCities();
-                            }else if ("cuntry".equals(type)){
+                            }else if ("county".equals(type)){
                                 queryCounties();
                             }
                         }
